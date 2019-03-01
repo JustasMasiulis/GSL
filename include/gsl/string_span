@@ -17,10 +17,10 @@
 #ifndef GSL_STRING_SPAN_H
 #define GSL_STRING_SPAN_H
 
-#include <gsl/gsl_assert> // for Ensures, Expects
-#include <gsl/gsl_util>   // for narrow_cast
-#include <gsl/span>       // for operator!=, operator==, dynamic_extent
-#include <gsl/pointers>   // for not_null
+#include "gsl_assert" // for Ensures, Expects
+#include "gsl_util"   // for narrow_cast
+#include "pointers"   // for not_null
+#include "span"       // for operator!=, operator==, dynamic_extent
 
 #include <algorithm> // for equal, lexicographical_compare
 #include <array>     // for array
@@ -113,11 +113,12 @@ span<T, dynamic_extent> ensure_sentinel(T* seq, std::ptrdiff_t max = PTRDIFF_MAX
 {
     Ensures(seq != nullptr);
 
-    GSL_SUPPRESS(f.23) // NO-FORMAT: attribute // TODO: false positive // TODO: suppress does not work
+    GSL_SUPPRESS(
+        f .23) // NO-FORMAT: attribute // TODO: false positive // TODO: suppress does not work
     auto cur = seq;
     Ensures(cur != nullptr); // workaround for removing the warning
 
-    GSL_SUPPRESS(bounds.1) // NO-FORMAT: attribute // TODO: suppress does not work
+    GSL_SUPPRESS(bounds .1) // NO-FORMAT: attribute // TODO: suppress does not work
     while ((cur - seq) < max && *cur != Sentinel) ++cur;
     Ensures(*cur == Sentinel);
     return {seq, cur - seq};
@@ -150,7 +151,8 @@ ensure_z(Cont& cont)
 template <typename CharT, std::ptrdiff_t>
 class basic_string_span;
 
-namespace details {
+namespace details
+{
     template <typename T>
     struct is_basic_string_span_oracle : std::false_type
     {
@@ -370,7 +372,7 @@ template <class ElementType, std::ptrdiff_t Extent>
 basic_string_span<const byte, details::calculate_byte_size<ElementType, Extent>::value>
 as_bytes(basic_string_span<ElementType, Extent> s) noexcept
 {
-    GSL_SUPPRESS(type.1) // NO-FORMAT: attribute
+    GSL_SUPPRESS(type .1) // NO-FORMAT: attribute
     return {reinterpret_cast<const byte*>(s.data()), s.size_bytes()};
 }
 
@@ -379,14 +381,15 @@ template <class ElementType, std::ptrdiff_t Extent,
 basic_string_span<byte, details::calculate_byte_size<ElementType, Extent>::value>
 as_writeable_bytes(basic_string_span<ElementType, Extent> s) noexcept
 {
-    GSL_SUPPRESS(type.1) // NO-FORMAT: attribute
+    GSL_SUPPRESS(type .1) // NO-FORMAT: attribute
     return {reinterpret_cast<byte*>(s.data()), s.size_bytes()};
 }
 
 // zero-terminated string span, used to convert
 // zero-terminated spans to legacy strings
 template <typename CharT, std::ptrdiff_t Extent = dynamic_extent>
-class basic_zstring_span {
+class basic_zstring_span
+{
 public:
     using value_type = CharT;
     using const_value_type = std::add_const_t<CharT>;
